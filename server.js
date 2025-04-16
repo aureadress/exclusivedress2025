@@ -12,7 +12,7 @@ app.use(cors({ origin: 'https://www.exclusivedress.com.br' }));
 app.use(express.json());
 
 // Usa o novo prompt atualizado (sem a palavra "troca")
-const promptBase = fs.readFileSync('prompt_IA_exclusive_dress_sem_troca.txt', 'utf8');
+const promptBase = fs.readFileSync('prompt.txt', 'utf8');
 
 app.post('/chat', async (req, res) => {
   const { busto, cintura, quadril, url, message } = req.body;
