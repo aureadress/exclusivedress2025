@@ -23,10 +23,12 @@ app.post('/chat', async (req, res) => {
   try {
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
+
     const descricao = $('#product-description').text().trim();
+    const nomeProduto = $('h1').first().text().trim() || $('title').text().trim() || 'vestido da Exclusive Dress';
 
     const prompt = message
-      ? `${promptBase}
+      ? `${promptBase.replace('**VESTIDO...', `**${nomeProduto}**`)}
 
 RESPOSTA GERAL:
 ${message}
