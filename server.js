@@ -1,10 +1,17 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors'); // 👉 Adiciona o CORS aqui
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ✅ Libera requisição do seu site
+app.use(cors({
+  origin: 'https://www.exclusivedress.com.br'
+}));
 
 app.use(express.json());
 
