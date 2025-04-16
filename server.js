@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors'); // 👉 Adiciona o CORS aqui
+const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -8,19 +8,17 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Libera requisição do seu site
-app.use(cors({
-  origin: 'https://www.exclusivedress.com.br'
-}));
-
+app.use(cors({ origin: 'https://www.exclusivedress.com.br' }));
 app.use(express.json());
 
-const promptBase = fs.readFileSync('prompt.txt', 'utf8');
+// Usa o novo prompt atualizado (sem a palavra "troca")
+const promptBase = fs.readFileSync('prompt_IA_exclusive_dress_sem_troca.txt', 'utf8');
 
 app.post('/chat', async (req, res) => {
-  const { busto, cintura, quadril, url } = req.body;
-  if (!busto || !cintura || !url) {
-    return res.status(400).json({ error: 'Medidas e URL são obrigatórios.' });
+  const { busto, cintura, quadril, url, message } = req.body;
+
+  if (!url) {
+    return res.status(400).json({ error: 'A URL é obrigatória.' });
   }
 
   try {
@@ -28,15 +26,9 @@ app.post('/chat', async (req, res) => {
     const $ = cheerio.load(response.data);
     const descricao = $('#product-description').text().trim();
 
-    const prompt = `${promptBase}
-
-MEDIDAS DA CLIENTE:
-Busto: ${busto}
-Cintura: ${cintura}
-Quadril: ${quadril}
-
-CONTEÚDO DA PÁGINA:
-${descricao}`;
+    const prompt = message
+      ? `${promptBase}\n\n${message}\n\nCONTEÚDO DA PÁGINA:\n${descricao}`
+      : `${promptBase}\n\nMEDIDAS DA CLIENTE:\nBusto: ${busto}\nCintura: ${cintura}\nQuadril: ${quadril}\n\nCONTEÚDO DA PÁGINA:\n${descricao}`;
 
     const resposta = await axios.post('https://api.openai.com/v1/chat/completions', {
       model: 'gpt-4',
