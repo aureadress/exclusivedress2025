@@ -1,8 +1,10 @@
+// BACKEND - Provador Inteligente sem LangChain (usando cheerio)
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { OpenAI } from "openai";
-import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
+import fetch from "node-fetch";
+import cheerio from "cheerio";
 
 dotenv.config();
 const app = express();
@@ -11,12 +13,19 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 app.use(cors());
 app.use(express.json());
 
+// Utilitário para fazer scraping com cheerio direto
+async function carregarHTMLDaPagina(url) {
+  const response = await fetch(url);
+  const html = await response.text();
+  const $ = cheerio.load(html);
+  return $.text();
+}
+
 app.post("/chat", async (req, res) => {
   try {
     const { busto, cintura, quadril, url, message } = req.body;
-    const loader = new CheerioWebBaseLoader(url);
-    const docs = await loader.load();
-    const conteudoProduto = docs.map((d) => d.pageContent).join("\n");
+
+    const conteudoProduto = await carregarHTMLDaPagina(url);
     const nomeVestido = url.split("/").pop()?.replace(/-/g, " ").toUpperCase();
 
     if (!message) {
