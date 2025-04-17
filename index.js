@@ -12,7 +12,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // ✅ Correção CORS
 app.use(cors({
-  origin: "*", // ou substitua por "https://exclusive-dress.com.br" no futuro
+  origin: "https://exclusivevdress.com.br",
   methods: ["POST", "GET", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
