@@ -13,9 +13,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // ✅ Correção CORS
 app.use(cors({
   origin: "https://exclusivevdress.com.br",
-  methods: ["POST", "GET", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ["POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
 }));
+
 
 app.use(express.json());
 
